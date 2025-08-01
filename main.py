@@ -1,28 +1,28 @@
-from scr.bot.adding_tag import add_pos_tag
+from scr.bot.bot_class import Game
 from scr.model.connect import model
-from scr.bot.start_game import start_game
-import scr.bot.start_game as sg
-import random
-global random_word, tryers, old_meessages
+
+game = Game()
 
 while True:
     message = input().lower()
-    clean_word = add_pos_tag(message)
+    clean_word = game.add_pos_tag(message)
     #clean_word=message
     print(clean_word)
 
     if clean_word not in model.key_to_index:
         print(f"Слово '{message}' отсутствует в модели.")
     else:
-        if clean_word == sg.random_word:
-            print(f"Вы победили за {sg.tryers} попыток")
-            start_game()
+        if clean_word == game.random_word:
+            print(f"Вы победили за {game.tryers} попыток")
+            game.random_word = game.new_random_word()
+            game.old_messages = []
+            game.tryers = 0
         else:
-            if clean_word in sg.old_meessages:
+            if clean_word in game.old_messages:
                 print("Это слово уже было")
             else:
-                sg.old_meessages.append(clean_word)
-                print(sg.random_word)
-                print(model.most_similar(positive=[sg.random_word], negative=[clean_word], topn=3))
-                sg.tryers+=1
+                game.old_messages.append(clean_word)
+                print(game.random_word)
+                print(model.most_similar(positive=[game.random_word], negative=[clean_word], topn=3))
+                game.tryers+=1
                 
