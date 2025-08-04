@@ -47,8 +47,9 @@ class Game:
         if clean_word not in model.key_to_index:
             return f"Слово '{message}' отсутствует в модели."
         elif clean_word == self.random_word:
+            tryer=self.tryers
             self.new_game()
-            return f"Вы победили за {self.tryers} попыток"
+            return f"Вы победили за {tryer} попыток"
         elif clean_word in self.old_messages:
             return "Это слово уже было"
         else:
