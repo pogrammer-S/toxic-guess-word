@@ -1,28 +1,18 @@
-from scr.bot.bot_class import Game
+from scr.game.game_class import Game
 from scr.model.connect import model
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 game = Game()
+app = FastAPI()
+templates = Jinja2Templates(directory="scr/fastapi")
+game_state = {
+    "random_word": game.random_word,
+    "tryers": game.tryers,
+    "old_messages": game.old_messages,
+    "answer_game": "введите сообщение"
+}
 
-while True:
-    message = input().lower()
-    clean_word = game.add_pos_tag(message)
-    #clean_word=message
-    print(clean_word)
-
-    if clean_word not in model.key_to_index:
-        print(f"Слово '{message}' отсутствует в модели.")
-    else:
-        if clean_word == game.random_word:
-            print(f"Вы победили за {game.tryers} попыток")
-            game.random_word = game.new_random_word()
-            game.old_messages = []
-            game.tryers = 0
-        else:
-            if clean_word in game.old_messages:
-                print("Это слово уже было")
-            else:
-                game.old_messages.append(clean_word)
-                print(game.random_word)
-                print(model.most_similar(positive=[game.random_word], negative=[clean_word], topn=3))
-                game.tryers+=1
-                
+from scr.fastapi.handler_fastapi import router
+app.include_router(router)

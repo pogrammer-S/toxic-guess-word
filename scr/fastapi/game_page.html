@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>toxic-guess-word</title>
+    </head>
+    <body>
+        toxic-guess-word<br>
+        {{game.tryers}}<br>
+        {{game.random_word}}<br>
+        {{game.answer_game}}<br>
+        <form action="/return_word" method="post">
+            <input type="text", name="message" placeholder="Введите слово" required>
+            <button type="submit">Отправить</button>
+    </body>
+</html>
