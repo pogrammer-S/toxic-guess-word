@@ -14,11 +14,13 @@ async def return_answer(request: Request, message: str = Form(...)):
     message = message.lower()
     clean_word = game.add_pos_tag(message)
 
+    answer=game.checking_word(clean_word, message)
+
     game_state = {
     "random_word": game.random_word,
     "tryers": game.tryers,
     "old_messages": game.old_messages,
-    "answer_game": game.checking_word(clean_word, message)
+    "answer_game": answer
     }
 
     return templates.TemplateResponse("game_page.html", {"request": request, "game": game_state})
