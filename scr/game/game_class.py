@@ -7,6 +7,11 @@ class Game:
         self.tryers = 0
         self.old_messages = []
 
+    def new_game(self):
+        self.random_word = self.new_random_word()
+        self.old_messages = []
+        self.tryers = 0
+
     def add_pos_tag(self, word):
         days = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье']
         if word.lower() in days:
@@ -37,3 +42,16 @@ class Game:
 
         print(rand_word)
         return rand_word
+    
+    def checking_word(self, clean_word: str, message: str):
+        if clean_word not in model.key_to_index:
+            return f"Слово '{message}' отсутствует в модели."
+        elif clean_word == self.random_word:
+            self.new_game()
+            return f"Вы победили за {self.tryers} попыток"
+        elif clean_word in self.old_messages:
+            return "Это слово уже было"
+        else:
+            self.old_messages.append(clean_word)
+            self.tryers+=1
+            return model.most_similar(positive=[self.random_word], negative=[clean_word], topn=3)
