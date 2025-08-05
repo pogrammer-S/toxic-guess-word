@@ -1,0 +1,15 @@
+services:
+  postgres:
+      image: postgres
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
+      ports:
+        - "54322:5432"
+  game:
+    depends_on:
+      - postgres
+    build: .
+    env_file:
+      - ./.env

@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS players(
+    ip VARCHAR(255) NOT NULL,
+    game_state JSON NOT NULL
+);
