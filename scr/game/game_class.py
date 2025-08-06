@@ -48,7 +48,7 @@ class Game:
         if clean_word not in model.key_to_index:
             return f"Слово '{message}' отсутствует в модели."
         elif clean_word == return_game_state(user_ip)["random_word"]:
-            tryer=return_game_state(user_ip)["random_word"]
+            tryer=return_game_state(user_ip)["tryer"]
             self.new_game()
             return f"Вы победили за {tryer} попыток"
         elif clean_word in return_game_state(user_ip)["old_messages"]:
