@@ -1,4 +1,5 @@
 from scr.model.connect import nlp, model
+from scr.database.db_service import return_game_state
 import random
 
 class Game:
@@ -43,14 +44,14 @@ class Game:
         print(rand_word)
         return rand_word
     
-    def checking_word(self, clean_word: str, message: str):
+    def checking_word(self, clean_word: str, message: str, user_ip):
         if clean_word not in model.key_to_index:
             return f"Слово '{message}' отсутствует в модели."
-        elif clean_word == self.random_word:
-            tryer=self.tryers
+        elif clean_word == return_game_state(user_ip)["random_word"]:
+            tryer=return_game_state(user_ip)["tryer"]
             self.new_game()
             return f"Вы победили за {tryer} попыток"
-        elif clean_word in self.old_messages:
+        elif clean_word in return_game_state(user_ip)["old_messages"]:
             return "Это слово уже было"
         else:
             self.old_messages.append(clean_word)
