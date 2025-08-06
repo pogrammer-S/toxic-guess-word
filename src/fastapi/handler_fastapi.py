@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Form, APIRouter
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from main import game, templates, app, game_state
-from scr.database.db_service import insert_game_state, return_game_state
+from src.database.db_service import insert_game_state
 
 router = APIRouter()
 

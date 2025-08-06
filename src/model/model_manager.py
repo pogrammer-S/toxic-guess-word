@@ -1,17 +1,9 @@
-from scr.model.connect import nlp, model
-from scr.database.db_service import return_game_state
 import random
+from .connect import model, nlp
 
-class Game:
+class ModelManager:
     def __init__(self):
-        self.random_word = self.new_random_word()
-        self.tryers = 0
-        self.old_messages = []
-
-    def new_game(self):
-        self.random_word = self.new_random_word()
-        self.old_messages = []
-        self.tryers = 0
+        pass
 
     def add_pos_tag(self, word):
         days = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье']
@@ -33,7 +25,7 @@ class Game:
         if self.add_pos_tag(random_word_tag[0]).split("_")[1] == random_word_tag[1]:
             return False
         return True
-    
+
     def new_random_word(self):
         rand_word = random.choice(list(model.key_to_index.keys()))
 
@@ -44,16 +36,5 @@ class Game:
         print(rand_word)
         return rand_word
     
-    def checking_word(self, clean_word: str, message: str, user_ip):
-        if clean_word not in model.key_to_index:
-            return f"Слово '{message}' отсутствует в модели."
-        elif clean_word == return_game_state(user_ip)["random_word"]:
-            tryer=return_game_state(user_ip)["tryer"]
-            self.new_game()
-            return f"Вы победили за {tryer} попыток"
-        elif clean_word in return_game_state(user_ip)["old_messages"]:
-            return "Это слово уже было"
-        else:
-            self.old_messages.append(clean_word)
-            self.tryers+=1
-            return model.most_similar(positive=[self.random_word], negative=[clean_word], topn=3)
+    def return_most_similar_word(self, random_word: str, clean_word: str, topn: int):
+        return model.most_similar(positive=[random_word], negative=[clean_word], topn=topn)
