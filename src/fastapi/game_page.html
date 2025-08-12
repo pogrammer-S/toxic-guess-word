@@ -9,7 +9,7 @@
         {{game.random_word}}<br>
         {{game.answer_game}}<br>
         <form action="/return_word" method="post">
-            <input type="text", name="message" placeholder="Введите слово" required>
+            <input type="text", name="message" placeholder="Введите слово" required minlength="2" maxlength="20" title="Ошибка при отправке слова">
             <button type="submit">Отправить</button>
     </body>
 </html>
