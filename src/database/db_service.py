@@ -15,7 +15,9 @@ def insert_game_state(user_ip: str, game_state: json):
 
         if not return_game_state(user_ip):
             cursor.execute("INSERT INTO players (ip, game_state) VALUES (%s, %s)", (user_ip, game_state,))
+            print(f"Записанно {user_ip}, {game_state}")
         else:
             cursor.execute("UPDATE players SET game_state = %s WHERE ip = %s", (game_state, user_ip,))
+            print(f"Обновленно {user_ip}, {game_state}")
     except Exception as e:
         logging.error(f"Ошибка выполнения запроса: {e}")

@@ -4,12 +4,12 @@ from main import model_manager, config
 
 class Game:
     def __init__(self):
-        self.random_word = self.new_random_word()
+        self.random_word = model_manager.new_random_word()
         self.tryers = 0
         self.old_messages = []
 
     def new_game(self):
-        self.random_word = self.new_random_word()
+        self.random_word = model_manager.new_random_word()
         self.old_messages = []
         self.tryers = 0
     
@@ -17,7 +17,7 @@ class Game:
         if clean_word not in model.key_to_index:
             return f"Слово '{message}' отсутствует в модели."
         elif clean_word == return_game_state(user_ip)["random_word"]:
-            tryer=return_game_state(user_ip)["tryer"]
+            tryer=return_game_state(user_ip)["tryers"]
             self.new_game()
             return f"Вы победили за {tryer} попыток"
         elif clean_word in return_game_state(user_ip)["old_messages"]:
