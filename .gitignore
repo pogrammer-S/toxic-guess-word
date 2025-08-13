@@ -1,3 +1,2 @@
-scr/model/model.bin
+backend/src/model/model.bin
 .env
-src/model/model.bin
