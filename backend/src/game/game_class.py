@@ -1,6 +1,6 @@
-from src.model.connect import nlp, model
+from src.model.connect import model
 from src.database.db_service import return_game_state
-from backend.main import model_manager, config
+from main import model_manager, config
 
 class Game:
     def __init__(self):

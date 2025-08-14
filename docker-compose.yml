@@ -20,6 +20,7 @@ services:
   bot:
     depends_on:
       - game
+      - postgres
     build: ./bot
     env_file:
       - ./bot/.env

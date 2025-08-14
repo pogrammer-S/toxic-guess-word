@@ -6,4 +6,4 @@ def load_handlers(bot):
 from .bot import bot
 
 def handler_message(message):
-    bot.send_message(message.chat.id, str(answer(message.from_user.id, {"message": message.text})))
+    bot.send_message(message.chat.id, str(answer(message.from_user.id, message.text)))

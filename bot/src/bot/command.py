@@ -1,4 +1,4 @@
-from backend.back_service import start_game
+from src.backend.back_service import start_game
 
 def load_command(bot):
     bot.register_message_handler(command_start, commands=['start'])
