@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-jinja2 
-python-multipart
-gensim
-numpy==1.23.5
-spacy==3.5.0
-dotenv
-psycopg2
