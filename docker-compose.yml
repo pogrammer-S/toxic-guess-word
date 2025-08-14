@@ -1,0 +1,19 @@
+services:
+  postgres:
+      image: postgres
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
+      volumes:
+      - ./src/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      ports:
+        - "54322:5432"
+  game:
+    depends_on:
+      - postgres
+    build: .
+    env_file:
+      - ./.env
+    ports:
+      - "8000:80"
