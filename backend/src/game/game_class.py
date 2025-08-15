@@ -13,9 +13,11 @@ class Game:
         self.old_messages = []
         self.tryers = 0
     
-    def checking_word(self, clean_word: str, message: str, user_ip):
+    def checking_word(self, clean_word: str, message: str, user_ip: int):
         if clean_word not in model.key_to_index:
             return f"Слово '{message}' отсутствует в модели."
+        elif clean_word.split('_')[1] != "NOUN":
+            return "Только существительные"
         elif clean_word == return_game_state(user_ip)["random_word"]:
             tryer=return_game_state(user_ip)["tryers"]
             self.new_game()
@@ -25,4 +27,15 @@ class Game:
         else:
             self.old_messages.append(clean_word)
             self.tryers+=1
-            return model_manager.return_most_similar_word(return_game_state(user_ip)["random_word"], clean_word, config.MODEL_TOPN)
+            #return model_manager.return_most_similar_word(return_game_state(user_ip)["random_word"], clean_word, config.MODEL_TOPN)
+            return "Неправильное слово"
+        
+    def help(self, user_ip: int):
+        random_word = return_game_state(user_ip)["random_word"]
+
+        if return_game_state(user_ip)["tryers"] >= 1:
+            clean_word = return_game_state(user_ip)["old_messages"][-1]
+            return f"Подсказка: {model_manager.return_most_similar_word(random_word, clean_word)}"
+        else:
+            return f"Подсказка: {model_manager.return_most_similar_on_start(random_word, config.MODEL_TOPN)}"
+
