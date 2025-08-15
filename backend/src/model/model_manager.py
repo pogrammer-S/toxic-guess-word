@@ -22,7 +22,7 @@ class ModelManager:
         return f"{word}_{pos}"
     
     def checking_tag(self, random_word_tag : list):
-        if self.add_pos_tag(random_word_tag[0]).split("_")[1] == random_word_tag[1]:
+        if self.add_pos_tag(random_word_tag[0]).split("_")[1] == random_word_tag[1] and random_word_tag[1]=="NOUN":
             return False
         return True
 
@@ -36,5 +36,9 @@ class ModelManager:
         print(rand_word)
         return rand_word
     
-    def return_most_similar_word(self, random_word: str, clean_word: str, topn: int):
-        return model.most_similar(positive=[random_word], negative=[clean_word], topn=topn)
+    def return_most_similar_word(self, random_word: str, clean_word: str):
+        vocab = model.key_to_index
+        return abs(vocab.get(random_word) - vocab.get(clean_word))
+    
+    def return_most_similar_on_start(self, random_word: str, topn: int):
+        return model.most_similar(positive=[random_word], topn=topn)
