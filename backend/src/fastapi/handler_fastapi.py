@@ -33,3 +33,17 @@ async def return_answer(user_id: int, message: str):
     insert_game_state(user_id, game_state)
 
     return game_state
+
+@router.get("/help/{user_id}")
+async def help(user_id: int):
+
+    game_state = {
+    "random_word": game.random_word,
+    "tryers": game.tryers,
+    "old_messages": game.old_messages,
+    "answer_game": game.help(user_id)
+    }
+
+    insert_game_state(user_id, game_state)
+
+    return game_state
