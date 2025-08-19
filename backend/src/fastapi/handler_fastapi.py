@@ -4,7 +4,7 @@ from src.database.db_service import insert_game_state
 
 router = APIRouter()
 
-@router.get("/{user_id}")
+@router.get("/")
 async def play_game(user_id : int):
     game.new_game()
     game_state = {
@@ -16,7 +16,7 @@ async def play_game(user_id : int):
     insert_game_state(user_id, game_state)
     return game_state
 
-@router.get("/return_word/{user_id}/{message}")
+@router.get("/return_word/")
 async def return_answer(user_id: int, message: str):
     message = message.lower()
     clean_word = model_manager.add_pos_tag(message)
@@ -34,9 +34,9 @@ async def return_answer(user_id: int, message: str):
 
     return game_state
 
-@router.get("/help/{user_id}")
+@router.get("/help/")
 async def help(user_id: int):
-
+    
     game_state = {
     "random_word": game.random_word,
     "tryers": game.tryers,

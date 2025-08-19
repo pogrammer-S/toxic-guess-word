@@ -7,7 +7,7 @@ def load_command(bot):
 from .bot import bot
 
 def command_start(message):
-    bot.send_message(message.chat.id, start_game(message.from_user.id))
+    bot.send_message(message.chat.id, start_game(message.from_user.id), parse_mode="HTML")
 
 def command_help(message):
-    bot.send_message(message.chat.id, help(message.from_user.id))
+    bot.send_message(message.chat.id, help(message.from_user.id), parse_mode="HTML")

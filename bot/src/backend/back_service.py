@@ -1,17 +1,24 @@
 import requests
 from src.config.config import load_config
-from urllib.parse import unquote
+from urllib.parse import urljoin
 config = load_config()
 
-url_start = config.API_URL_START
-url_return_word = config.API_URL_RETURN_WORD
-url_help = config.API_URL_HELP
+url = config.API_URL
 
 def start_game(user_id : int):
-    return str(requests.get(url_start+str(user_id)).json()["answer_game"])
+    try:
+        return str(requests.get(url, params={'user_id': user_id}).json()["answer_game"])
+    except Exception as e:
+        return f"ошибка при выполнении запроса: {e}"
 
 def answer(user_id : int, message : str):
-    return str(requests.get(url_return_word+str(user_id)+'/'+unquote(message)).json()["answer_game"])
+    try:
+        return str(requests.get(urljoin(url, "return_word/"), params={'user_id': user_id, "message": message}).json()["answer_game"])
+    except Exception as e:
+        return f"ошибка при выполнении запроса: {e}"
 
 def help(user_id : int):
-    return str(requests.get(url_help+str(user_id)).json()["answer_game"])
+    try:
+        return str(requests.get(urljoin(url, "help/"), params={'user_id': user_id}).json()["answer_game"])
+    except Exception as e:
+        return f"ошибка при выполнении запроса: {e}"
