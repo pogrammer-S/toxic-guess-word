@@ -11,7 +11,7 @@ async def play_game(user_id : int):
     "random_word": game.random_word,
     "tryers": game.tryers,
     "old_messages": game.old_messages,
-    "answer_game": "Введите слово. Вы можете ввести /help сейчас что бы получить похожие слова"
+    "answer_game": "Старт"
     }
     insert_game_state(user_id, game_state)
     return game_state
@@ -21,7 +21,7 @@ async def return_answer(user_id: int, message: str):
     message = message.lower()
     clean_word = model_manager.add_pos_tag(message)
 
-    answer=game.checking_word(clean_word, message, user_id)
+    answer=game.checking_word(clean_word, user_id)
 
     game_state = {
     "random_word": game.random_word,
