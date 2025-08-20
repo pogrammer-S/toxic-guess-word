@@ -20,9 +20,8 @@ class Game:
         elif clean_word.split('_')[1] != "NOUN":
             return "Только существительные"
         elif clean_word == random_word:
-            tryer=return_game_state(user_ip)["tryers"]
             self.new_game()
-            return f"Победа {tryer} {self.help_start()}"
+            return f"Победа {self.help_start()}"
         elif clean_word in return_game_state(user_ip)["old_messages"]:
             return "Было"
         else:

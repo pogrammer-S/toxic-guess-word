@@ -14,10 +14,10 @@ def command_start(message):
     try:
         logging.info("Полученна команда /start")
         answer_server = start_game(message.from_user.id)
-        if answer_server == "Старт":
+        if answer_server["answer_game"] == "Старт":
             bot.send_message(message.chat.id, "<b>Введите слово.</b>\nДоступные комманды: /help - для получения подсказки,\n/start - для начала новой игры", parse_mode="HTML")
         else:
-            bot.send_message(message.chat.id, answer_server)
+            bot.send_message(message.chat.id, str(answer_server))
     except Exception as e:
         bot.send_message(message.chat.id, f"Ошибка:\n<b>{e}</b>", parse_mode="HTML")
         logging.error(f"Ошибка команда /start:{e}")
@@ -26,11 +26,11 @@ def command_help(message):
     try:
         logging.info("Полученна команда /help")
         answer_server = help(message.from_user.id)
-        if "Помощь" in answer_server.split():
-            html_list = ast.literal_eval(answer_server[answer_server.find('['):answer_server.rfind(']') + 1])
+        if "Помощь" in answer_server["answer_game"].split():
+            html_list = ast.literal_eval(answer_server[answer_server.find('['):answer_server["answer_game"].rfind(']') + 1])
             bot.send_message(message.chat.id, f"<b>Подсказка:</b>\n{html_list}", parse_mode="HTML")
         else:
-            bot.send_message(message.chat.id, answer_server)
+            bot.send_message(message.chat.id, str(answer_server))
     except Exception as e:
         bot.send_message(message.chat.id, f"Ошибка:\n<b>{e}</b>", parse_mode="HTML")
         logging.error(f"Ошибка команда /help:{e}")
