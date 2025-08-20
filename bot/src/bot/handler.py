@@ -3,6 +3,7 @@ import ast
 import logging
 
 def load_handlers(bot):
+    logging.info("Загрузка хендлера...")
     bot.register_message_handler(handler_message, content_types=['text'])
     logging.info("Хандлер загружен")
 

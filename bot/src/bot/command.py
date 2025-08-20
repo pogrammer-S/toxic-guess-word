@@ -3,6 +3,7 @@ import ast
 import logging
 
 def load_command(bot):
+    logging.info("Загрузка команд...")
     bot.register_message_handler(command_start, commands=['start'])
     bot.register_message_handler(command_help, commands=['help'])
     logging.info("Команды загруженны")

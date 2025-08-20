@@ -4,6 +4,7 @@ import logging
 
 import telebot
 bot = telebot.TeleBot(config.BOT_TOKEN)
+logging.info(f"Бот {bot.get_me().username} запущен")
 
 from .handler import load_handlers
 from .command import load_command
