@@ -14,6 +14,7 @@ async def play_game(user_id : int):
     "answer_game": "Старт"
     }
     insert_game_state(user_id, game_state)
+    game_state.pop("random_word")
     return game_state
 
 @router.get("/return_word/")
@@ -31,7 +32,7 @@ async def return_answer(user_id: int, message: str):
     }
 
     insert_game_state(user_id, game_state)
-
+    game_state.pop("random_word")
     return game_state
 
 @router.get("/help/")
@@ -45,5 +46,5 @@ async def help(user_id: int):
     }
 
     insert_game_state(user_id, game_state)
-
+    game_state.pop("random_word")
     return game_state
