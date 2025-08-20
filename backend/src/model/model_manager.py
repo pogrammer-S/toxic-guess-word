@@ -1,5 +1,6 @@
 import random
 from .connect import model, nlp
+import logging
 
 class ModelManager:
     def __init__(self):
@@ -30,10 +31,10 @@ class ModelManager:
         rand_word = random.choice(list(model.key_to_index.keys()))
 
         while self.checking_tag(rand_word.split("_")):
-            print(f"{rand_word} не удачно, добавляется {self.add_pos_tag(rand_word.split('_')[0]).split('_')[1]}")
+            logging.info(f"{rand_word} не удачно, добавляется {self.add_pos_tag(rand_word.split('_')[0]).split('_')[1]}")
             rand_word = random.choice(list(model.key_to_index.keys()))
 
-        print(rand_word)
+        logging.info(rand_word)
         return rand_word
     
     def return_most_similar_word(self, random_word: str, clean_word: str):

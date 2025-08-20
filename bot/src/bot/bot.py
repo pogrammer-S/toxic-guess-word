@@ -1,5 +1,6 @@
 from src.config.config import load_config
 config = load_config()
+import logging
 
 import telebot
 bot = telebot.TeleBot(config.BOT_TOKEN)
@@ -9,3 +10,4 @@ from .command import load_command
 
 load_command(bot)
 load_handlers(bot)
+logging.info("Готов к работе")

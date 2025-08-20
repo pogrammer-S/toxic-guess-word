@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS sesion(
+    id INT NOT NULL,
+    session_guid VARCHAR(255) NOT NULL
+);

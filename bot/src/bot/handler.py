@@ -1,13 +1,16 @@
 from src.backend.back_service import answer
 import ast
+import logging
 
 def load_handlers(bot):
-    bot.register_message_handler(handler_message, content_types=['text'])   
+    bot.register_message_handler(handler_message, content_types=['text'])
+    logging.info("Хандлер загружен")
 
 from .bot import bot
 
 def handler_message(message):
     try:
+        logging.info(f"Полученно сообщение {message}")
         answer_server = str(answer(message.from_user.id, message.text))
         if answer_server == "Нет слова":
             bot.send_message(message.chat.id, f"<b>Слово <i>{message.text}</i> отсутствует в модели.</b>", parse_mode="HTML")
@@ -26,3 +29,4 @@ def handler_message(message):
             bot.send_message(message.chat.id, answer_server, parse_mode="HTML")
     except Exception as e:
         bot.send_message(message.chat.id, f"Ошибка:\n<b>{e}</b>", parse_mode="HTML")
+        logging.error(f"Ошибка сообщения:{e}")

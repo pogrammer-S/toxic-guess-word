@@ -1,4 +1,4 @@
 CREATE TABLE IF NOT EXISTS players(
-    id INT NOT NULL,
+    session_id VARCHAR(255) NOT NULL,
     game_state JSON NOT NULL
 );
