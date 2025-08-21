@@ -5,7 +5,7 @@ import logging
 
 from src.dependency_injection import container
 from src.application.game_service import GameService, GameServiceError
-from src.domain.interfaces import SimilarWord, GameState, GameStats
+from src.domain.interfaces import SimilarWord, GameState
 
 router = APIRouter(prefix="/api/v1")
 
@@ -17,14 +17,11 @@ class SimilarWordResponse(BaseModel):
 class GameResponse(BaseModel):
     attempts_left: int = Field(ge=0)
     previous_words: List[SimilarWordResponse] = Field(default_factory=list)
-    last_message: Optional[str] = None
+    message: Optional[str] = None
     is_completed: bool
     session_id: Optional[str] = None  # Только для /start
 
-class StatsResponse(BaseModel):
-    total_games: int = Field(ge=0)
-    won_games: int = Field(ge=0)
-    average_attempts: float = Field(ge=0)
+
 
 class GuessRequest(BaseModel):
     word: str = Field(..., min_length=1)
@@ -51,7 +48,7 @@ async def validate_session(
         if not session_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="X-Session-Id header is required"
+                detail="Требуется заголовок X-Session-Id"
             )
         
         # Проверяем существование игры
@@ -59,12 +56,12 @@ async def validate_session(
         if not game_state:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Game not found. Start a new game first."
+                detail="Игра не найдена. Начните новую игру."
             )
         
         return session_id
     except GameServiceError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Ошибка при проверке сессии: {str(e)}")
 
 def _convert_game_state_to_response(game_state: GameState, session_id: Optional[str] = None) -> GameResponse:
     """Конвертирует GameState в GameResponse"""
@@ -77,7 +74,7 @@ def _convert_game_state_to_response(game_state: GameState, session_id: Optional[
             SimilarWordResponse(word=word.word, distance=word.distance)
             for word in sorted_words
         ],
-        last_message=game_state.last_message,
+        message=game_state.message,
         is_completed=game_state.is_completed,
         session_id=session_id
     )
@@ -88,10 +85,10 @@ async def start_new_game(
     response: Response,
     game_service: GameService = Depends(get_game_service)
 ):
-    """Start a new game session.
+    """Начинает новую игровую сессию.
     
-    Creates a new session or reuses existing one based on client IP.
-    Returns game state and session ID in both response body and X-Session-Id header.
+    Создает новую сессию или переиспользует существующую на основе IP клиента.
+    Возвращает состояние игры и session ID в теле ответа и заголовке X-Session-Id.
     """
     try:
         # Начинаем новую игру через сервис
@@ -107,20 +104,20 @@ async def start_new_game(
         logging.error(f"Service error in start_new_game: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
+            detail=f"Ошибка при создании игры: {str(e)}"
         )
     except Exception as e:
         logging.error(f"Unexpected error in start_new_game: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
+            detail=f"Неожиданная ошибка при создании игры: {str(e)}"
         )
 
 responses = {
-    422: {"description": "Unprocessable Entity - Invalid word, non-noun word, or word already used"},
-    404: {"description": "Not Found - Game not found"},
-    409: {"description": "Conflict - Game already completed"},
-    500: {"description": "Internal Server Error"}
+    422: {"description": "Некорректное слово - слово не найдено в словаре, не является существительным или уже использовалось"},
+    404: {"description": "Игра не найдена - начните новую игру"},
+    409: {"description": "Игра уже завершена"},
+    500: {"description": "Внутренняя ошибка сервера"}
 }
 
 @router.post("/game/guess", response_model=GameResponse, responses=responses)
@@ -130,20 +127,20 @@ async def make_guess(
     session_id: str = Depends(validate_session),
     game_service: GameService = Depends(get_game_service)
 ):
-    """Make a guess in the current game.
+    """Делает попытку угадать слово в текущей игре.
     
     Args:
-        guess: The word to guess (must be a noun)
-        session_id: Game session ID from X-Session-Id header
+        guess: Слово для угадывания (должно быть существительным)
+        session_id: ID игровой сессии из заголовка X-Session-Id
     
     Returns:
-        GameResponse with current game state
+        GameResponse с текущим состоянием игры
         
     Raises:
-        422: Word not in dictionary, not a noun, or already used
-        404: Game not found
-        409: Game already completed
-        500: Server error
+        422: Слово не найдено в словаре, не является существительным или уже использовалось
+        404: Игра не найдена
+        409: Игра уже завершена
+        500: Ошибка сервера
     """
     try:
         # Получаем текущее состояние для проверки завершения
@@ -157,11 +154,11 @@ async def make_guess(
         game_state = game_service.make_guess(session_id, guess.word)
         
         # Проверяем результат и устанавливаем соответствующий статус
-        if game_state.last_message and "Такого слова нет в словаре" in game_state.last_message:
+        if game_state.message and "Такого слова нет в словаре" in game_state.message:
             response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
-        elif game_state.last_message and "Можно использовать только существительные" in game_state.last_message:
+        elif game_state.message and "Можно использовать только существительные" in game_state.message:
             response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
-        elif game_state.last_message and "Это слово уже использовалось" in game_state.last_message:
+        elif game_state.message and "Это слово уже использовалось" in game_state.message:
             response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
         
         return _convert_game_state_to_response(game_state)
@@ -175,10 +172,10 @@ async def make_guess(
             return _convert_game_state_to_response(current_state)
         else:
             logging.error(f"Service error in make_guess: {e}")
-            raise HTTPException(status_code=500, detail="Internal server error")
+            raise HTTPException(status_code=500, detail=f"Ошибка при обработке попытки: {str(e)}")
     except Exception as e:
         logging.error(f"Unexpected error in make_guess: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=f"Неожиданная ошибка при обработке попытки: {str(e)}")
 
 @router.get("/game/hint", response_model=GameResponse)
 async def get_hint(
@@ -186,7 +183,7 @@ async def get_hint(
     session_id: str = Depends(validate_session),
     game_service: GameService = Depends(get_game_service)
 ):
-    """Get a hint for the current word."""
+    """Получает подсказку для текущего слова."""
     try:
         # Получаем текущее состояние для проверки завершения
         current_state = game_service.get_game_state(session_id)
@@ -212,27 +209,8 @@ async def get_hint(
             return _convert_game_state_to_response(current_state)
         else:
             logging.error(f"Service error in get_hint: {e}")
-            raise HTTPException(status_code=500, detail="Internal server error")
+            raise HTTPException(status_code=500, detail=f"Ошибка при получении подсказки: {str(e)}")
     except Exception as e:
         logging.error(f"Unexpected error in get_hint: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail=f"Неожиданная ошибка при получении подсказки: {str(e)}")
 
-@router.get("/game/stats", response_model=StatsResponse)
-async def get_statistics(
-    session_id: str = Depends(validate_session),
-    game_service: GameService = Depends(get_game_service)
-):
-    """Get statistics for the current session."""
-    try:
-        stats = game_service.get_statistics(session_id)
-        return StatsResponse(
-            total_games=stats.total_games,
-            won_games=stats.won_games,
-            average_attempts=stats.average_attempts
-        )
-    except GameServiceError as e:
-        logging.error(f"Service error in get_statistics: {e}")
-        raise HTTPException(status_code=500, detail="Internal server error")
-    except Exception as e:
-        logging.error(f"Unexpected error in get_statistics: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")

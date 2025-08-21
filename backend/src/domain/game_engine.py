@@ -19,7 +19,7 @@ class GameEngine(IGameEngine):
             target_word=target_word,
             attempts_left=0,  # В начале игры 0 попыток
             previous_words=[],  # Пустой список - слова будут добавляться по мере угадывания
-            last_message="Игра началась! Попробуйте угадать слово.",
+            message="Игра началась! Попробуйте угадать слово.",
             is_completed=False,
             session_id=session_id
         )
@@ -55,7 +55,7 @@ class GameEngine(IGameEngine):
         
         # Проверяем, угадано ли слово
         if clean_word == current_state.target_word:
-            return self._create_win_state(current_state)
+            return self._create_win_state(current_state, clean_word)
         
         # Слово не угадано - получаем подсказку
         return self._create_incorrect_guess_state(current_state, clean_word)
@@ -96,14 +96,14 @@ class GameEngine(IGameEngine):
             target_word=current_state.target_word,
             attempts_left=current_state.attempts_left,
             previous_words=new_previous_words,
-            last_message=f"Подсказка: попробуйте слово '{hint_word.split('_')[0]}'",
+            message=f"Подсказка: попробуйте слово '{hint_word.split('_')[0]}'",
             is_completed=current_state.is_completed,
             session_id=session_id
         )
         
         self.game_repository.save_game_state(updated_state)
         
-        return updated_state.last_message
+        return updated_state.message
     
     def _create_error_state(self, current_state: GameState, error_message: str) -> GameState:
         """Создает состояние с ошибкой"""
@@ -111,7 +111,7 @@ class GameEngine(IGameEngine):
             target_word=current_state.target_word,
             attempts_left=current_state.attempts_left,
             previous_words=current_state.previous_words,
-            last_message=error_message,
+            message=error_message,
             is_completed=current_state.is_completed,
             session_id=current_state.session_id
         )
@@ -119,13 +119,18 @@ class GameEngine(IGameEngine):
         self.game_repository.save_game_state(error_state)
         return error_state
     
-    def _create_win_state(self, current_state: GameState) -> GameState:
+    def _create_win_state(self, current_state: GameState, correct_word: str) -> GameState:
         """Создает состояние победы"""
+        # Добавляем отгаданное слово в список предыдущих слов
+        new_previous_words = current_state.previous_words + [
+            SimilarWord(word=correct_word.split('_')[0], distance=0)
+        ]
+        
         win_state = GameState(
             target_word=current_state.target_word,
             attempts_left=current_state.attempts_left + 1,
-            previous_words=current_state.previous_words,
-            last_message="Поздравляем! Вы угадали слово!",
+            previous_words=new_previous_words,
+            message="Поздравляем! Вы угадали слово!",
             is_completed=True,
             session_id=current_state.session_id
         )
@@ -147,7 +152,7 @@ class GameEngine(IGameEngine):
             target_word=current_state.target_word,
             attempts_left=current_state.attempts_left + 1,
             previous_words=new_previous_words,
-            last_message=f"Неверно. Расстояние до слова: {int(distance)}",
+            message=f"Неверно. Расстояние до слова: {int(distance)}",
             is_completed=False,
             session_id=current_state.session_id
         )

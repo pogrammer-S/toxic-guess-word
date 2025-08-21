@@ -12,15 +12,11 @@ class GameState:
     target_word: str
     attempts_left: int
     previous_words: List[SimilarWord]
-    last_message: Optional[str] = None
+    message: Optional[str] = None
     is_completed: bool = False
     session_id: str = ""
 
-@dataclass
-class GameStats:
-    total_games: int
-    won_games: int
-    average_attempts: float
+
 
 
 
@@ -38,10 +34,7 @@ class IGameRepository(ABC):
     @abstractmethod
     def create_session(self, client_ip: Optional[str] = None) -> str:
         pass
-    
-    @abstractmethod
-    def get_session_stats(self, session_id: str) -> GameStats:
-        pass
+
 
 class IWordModel(ABC):
     """Интерфейс для работы с моделью слов"""

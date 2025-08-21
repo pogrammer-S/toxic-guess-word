@@ -12,15 +12,11 @@ services:
   game:
     depends_on:
       - postgres
-    build: 
-      context: ./backend
-      dockerfile: dockerfile.dev
+    build: ./backend
     env_file:
       - ./backend/.env
     ports:
       - "8000:80"
-    volumes:
-      - ./backend:/app
   bot:
     depends_on:
       - game
@@ -28,4 +24,3 @@ services:
     build: ./bot
     env_file:
       - ./bot/.env
-      

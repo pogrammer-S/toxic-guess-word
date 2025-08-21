@@ -1,6 +1,35 @@
-from typing import Optional, Tuple
-from src.domain.interfaces import IGameEngine, IGameRepository, GameState, GameStats
-from src.infrastructure.game_repository import DatabaseError
+import json
+import logging
+from typing import Optional, Tuple, List
+from src.domain.interfaces import IGameEngine, IGameRepository, GameState, SimilarWord
+
+class WordParser:
+    """Утилитарный класс для парсинга слов"""
+    
+    @staticmethod
+    def parse_previous_words(words_data) -> List[SimilarWord]:
+        """Парсит previous_words из БД в список SimilarWord"""
+        previous_words = []
+        if words_data:
+            try:
+                # Парсим JSON
+                if isinstance(words_data, str):
+                    parsed_data = json.loads(words_data)
+                else:
+                    parsed_data = words_data
+                
+                for word_data in parsed_data:
+                    if isinstance(word_data, dict):
+                        previous_words.append(SimilarWord(
+                            word=word_data["word"], 
+                            distance=word_data["distance"]
+                        ))
+            except (json.JSONDecodeError, TypeError) as e:
+                logging.error(f"Ошибка парсинга previous_words: {e}")
+                # Возвращаем пустой список если не можем распарсить
+                previous_words = []
+        
+        return previous_words
 
 class GameService:
     """Сервисный слой для координации игровой логики"""
@@ -47,12 +76,11 @@ class GameService:
         except DatabaseError as e:
             raise GameServiceError(f"Ошибка при получении состояния игры: {e}")
     
-    def get_statistics(self, session_id: str) -> GameStats:
-        """Получает статистику для сессии"""
-        try:
-            return self.game_repository.get_session_stats(session_id)
-        except DatabaseError as e:
-            raise GameServiceError(f"Ошибка при получении статистики: {e}")
+
+
+class DatabaseError(Exception):
+    """Исключение для ошибок базы данных"""
+    pass
 
 class GameServiceError(Exception):
     """Исключение для ошибок сервисного слоя"""

@@ -7,7 +7,11 @@ from fastapi.responses import HTMLResponse
 
 from src.fastapi.handler_fastapi import router
 
-app = FastAPI()
+app = FastAPI(
+    title="Toxic Guess Word API",
+    description="API для игры 'Угадай слово'",
+    version="1.0.0"
+)
 
 # Включаем роутер API
 app.include_router(router)

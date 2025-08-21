@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS sessions (
     id VARCHAR(255) NOT NULL PRIMARY KEY,
     session_guid UUID NOT NULL DEFAULT gen_random_uuid(),
+    client_ip VARCHAR(255),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT sessions_guid_key UNIQUE (session_guid)
