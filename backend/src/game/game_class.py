@@ -13,8 +13,8 @@ class Game:
         self.old_messages = []
         self.tryers = 0
     
-    def checking_word(self, clean_word: str, user_ip: int):
-        random_word = return_game_state(user_ip)["random_word"]
+    def checking_word(self, clean_word: str, session_id: str):
+        random_word = return_game_state(session_id)["random_word"]
         if clean_word not in model.key_to_index:
             return "Нет слова"
         elif clean_word.split('_')[1] != "NOUN":
@@ -22,16 +22,16 @@ class Game:
         elif clean_word == random_word:
             self.new_game()
             return f"Победа {self.help_start()}"
-        elif clean_word in return_game_state(user_ip)["old_messages"]:
+        elif clean_word in return_game_state(session_id)["old_messages"]:
             return "Было"
         else:
             self.old_messages.append(clean_word)
             self.tryers+=1
-            #return model_manager.return_most_similar_word(return_game_state(user_ip)["random_word"], clean_word, config.MODEL_TOPN)
+            #return model_manager.return_most_similar_word(return_game_state(session_id)["random_word"], clean_word, config.MODEL_TOPN)
             return f"Неверно {model_manager.return_most_similar_word(random_word, clean_word)}"
         
-    def help(self, user_ip: int):
-        random_word = return_game_state(user_ip)["random_word"]
+    def help(self, session_id: str):
+        random_word = return_game_state(session_id)["random_word"]
         most_similar_word = model_manager.return_most_similar_on_start(random_word, config.MODEL_TOPN)
         return f"Помощь {most_similar_word}"
     

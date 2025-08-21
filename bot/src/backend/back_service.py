@@ -1,28 +1,24 @@
 import requests
 from src.config.config import load_config
 from urllib.parse import urljoin
-from src.database.db_service import return_session
 config = load_config()
 
 url = config.API_URL
 
 def start_game(user_id : int):
     try:
-        session = return_session(user_id)
-        return requests.get(url, headers={'user_id': session}).json()
+        return requests.get(url, headers={'user_id': str(user_id)}).json()
     except Exception as e:
         return {"answer_game": f"ошибка при выполнении запроса: {e}"}
 
 def answer(user_id : int, message : str):
     try:
-        session = return_session(user_id)
-        return requests.get(urljoin(url, "return_word/"), headers={'user_id': session}, params={"message": message}).json()
+        return requests.get(urljoin(url, "return_word/"), headers={'user_id': str(user_id)}, params={"message": message}).json()
     except Exception as e:
         return {"answer_game": f"ошибка при выполнении запроса: {e}"}
 
 def help(user_id : int):
     try:
-        session = return_session(user_id)
-        return requests.get(urljoin(url, "help/"), headers={'user_id': session}).json()["answer_game"]
+        return requests.get(urljoin(url, "help/"), headers={'user_id': str(user_id)}).json()["answer_game"]
     except Exception as e:
         return f"ошибка при выполнении запроса: {e}"
