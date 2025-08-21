@@ -1,5 +1,7 @@
 import psycopg2
-from main import config
+from src.config.config import load_config
+
+config = load_config()
 
 conn = psycopg2.connect(
     dbname=config.DB_NAME,
