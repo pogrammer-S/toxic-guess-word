@@ -7,6 +7,7 @@ services:
       POSTGRES_DB: postgres
     volumes:
     - ./backend/src/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    - ./bot/src/database/init.sql:/docker-entrypoint-initdb.d/init2.sql
     ports:
       - "54322:5432"
   game:

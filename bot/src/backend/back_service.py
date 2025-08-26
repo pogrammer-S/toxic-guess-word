@@ -1,24 +1,24 @@
 import requests
-from src.config.config import load_config
 from urllib.parse import urljoin
-config = load_config()
 
-url = config.API_URL
+class Back_servise():
+    def __init__(self, url):
+        self.url = url
 
-def start_game(user_id : int):
-    try:
-        return requests.get(url, headers={'user_id': str(user_id)}).json()
-    except Exception as e:
-        return {"answer_game": f"ошибка при выполнении запроса: {e}"}
+    def start_game(self):
+        try:
+            return requests.post(urljoin(self.url, "start/")).json()
+        except Exception as e:
+            return {"answer_game": f"ошибка при выполнении запроса: {e}"}
 
-def answer(user_id : int, message : str):
-    try:
-        return requests.get(urljoin(url, "return_word/"), headers={'user_id': str(user_id)}, params={"message": message}).json()
-    except Exception as e:
-        return {"answer_game": f"ошибка при выполнении запроса: {e}"}
+    def answer(self, session_id : str, message : str):
+        try:
+            return requests.post(urljoin(self.url, "guess/"), headers={'X-Session-Id': session_id}, json={'word': message}).json()
+        except Exception as e:
+            return {"answer_game": f"ошибка при выполнении запроса: {e}"}
 
-def help(user_id : int):
-    try:
-        return requests.get(urljoin(url, "help/"), headers={'user_id': str(user_id)}).json()["answer_game"]
-    except Exception as e:
-        return f"ошибка при выполнении запроса: {e}"
+    def help(self, session_id : str):
+        try:
+            return requests.get(urljoin(self.url, "hint/"), headers={'X-Session-Id': session_id}).json()
+        except Exception as e:
+            return f"ошибка при выполнении запроса: {e}"
