@@ -92,7 +92,9 @@ async def start_new_game(
     """
     try:
         # Начинаем новую игру через сервис
-        game_state, session_id = game_service.start_new_game(request.client.host)
+        body = await request.json()
+        user_id = body.get("user_id")
+        game_state, session_id = game_service.start_new_game(user_id)
         
         # Устанавливаем заголовок
         response.headers["X-Session-Id"] = session_id
