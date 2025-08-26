@@ -13,7 +13,7 @@ from .bot import bot, backend_client
 def command_start(message):
     try:
         logging.info("Полученна команда /start")
-        answer_server = backend_client.start_game()
+        answer_server = backend_client.start_game(message.from_user.id)
         logging.info(f"Юзер: {message.from_user.id}, сессия: {answer_server["session_id"]}")
         save_session_id(answer_server["session_id"], message.from_user.id)
         bot.send_message(message.from_user.id, f"<b>{answer_server['message']}</b>", parse_mode="HTML")

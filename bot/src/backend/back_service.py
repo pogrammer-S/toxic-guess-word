@@ -5,9 +5,9 @@ class Back_servise():
     def __init__(self, url):
         self.url = url
 
-    def start_game(self):
+    def start_game(self, user_id: int):
         try:
-            return requests.post(urljoin(self.url, "start/")).json()
+            return requests.post(urljoin(self.url, "start/"), json={"user_id": str(user_id)}).json()
         except Exception as e:
             return {"answer_game": f"ошибка при выполнении запроса: {e}"}
 
