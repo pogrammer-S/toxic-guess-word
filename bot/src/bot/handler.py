@@ -23,6 +23,10 @@ def handler_message(message):
             bot.send_message(message.chat.id, f"<b>Сессия не найдена</b>", parse_mode="HTML")
             return None
 
+        if not chec_valid(message.text):
+            bot.send_message(message.chat.id, f"<b>Только русские буквы</b>", parse_mode="HTML")
+            return None
+        
         if answer_server["is_completed"] == True:
             bot.send_message(message.chat.id, f"Вы победили за {answer_server['attempts_left']} попыток\n<b>Игра завершена. Начните новую игру командой</b> /start", parse_mode="HTML")
         else:
@@ -31,3 +35,8 @@ def handler_message(message):
     except Exception as e:
         bot.send_message(message.chat.id, f"Ошибка:\n<b>{e}</b>", parse_mode="HTML")
         logging.error(f"Ошибка сообщения:{e}")
+
+
+def chec_valid(message: str):
+    valid = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+    return set(message).issubset(set(valid))
