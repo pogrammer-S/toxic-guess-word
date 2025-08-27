@@ -96,6 +96,7 @@ DB_USER=DB_USER
 DB_PASSWORD=DB_PASSWORD
 DB_PORT=DB_PORT
 ```
+### 4. Запустите через Docker Compose
 
 ```bash
 docker-compose up -d --build
