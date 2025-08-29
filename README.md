@@ -73,7 +73,7 @@ toxic-guess-word/
 
 ```bash
 git clone <repo-url>
-cd tg-bot-listener
+cd toxic-guess-word
 ```
 
 ### 2. Создайте файл `.env` в backend и bot по образцам .env.example
@@ -96,7 +96,7 @@ DB_USER=DB_USER
 DB_PASSWORD=DB_PASSWORD
 DB_PORT=DB_PORT
 ```
-### 4. Запустите через Docker Compose
+### 3. Запустите через Docker Compose
 
 ```bash
 docker-compose up -d --build
